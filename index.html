@@ -4604,4 +4604,192 @@ src="https://www.facebook.com/tr?id=1208230168032417&ev=PageView&noscript=1"
 });
 </script>
 
+
+<style>
+/* --- Mobile hero: button directly below the first subhead, larger tap target --- */
+@media (max-width: 767px) {
+  #col-d3F3NjB4DV > .inner { display: flex; }
+  #image-raWOTrZ9XI { order: 1; }
+  #paragraph-UuhaKVqxLl { order: 2; }
+  #heading-_9snxL0LkR { order: 3; }
+  #sub-heading-DL0K-Rj5nQ { order: 4; }
+  #button-ccLjv87YSX { order: 5; margin-top: 14px; margin-bottom: 6px; width: 100%; }
+  #image-5VtdzKU-cj { order: 6; }
+  #sub-heading-STN89v709X { order: 7; }
+  .cbutton-ccLjv87YSX { width: 100% !important; padding: 18px 22px !important; }
+  .button-ccLjv87YSX .main-heading-button { font-size: 18px !important; }
+}
+
+/* --- Sticky mobile CTA bar --- */
+#iti-sticky {
+  display: none; position: fixed; left: 0; right: 0; bottom: 0; z-index: 9998;
+  padding: 10px 14px calc(10px + env(safe-area-inset-bottom));
+  background: rgba(0,0,0,.92); backdrop-filter: blur(6px);
+  transform: translateY(110%); transition: transform .3s ease;
+}
+#iti-sticky.on { transform: translateY(0); }
+#iti-sticky button {
+  display: block; width: 100%; border: 0; border-radius: 999px; cursor: pointer;
+  padding: 15px 20px; font-size: 17px; font-weight: 700; color: #fff;
+  font-family: var(--contentfont, 'Plus Jakarta Sans', sans-serif);
+  background: linear-gradient(135deg, #C8083F, #FF2251);
+  box-shadow: 0 0 18px #ff225166;
+}
+@media (max-width: 767px) { #iti-sticky { display: block; } }
+
+/* --- Exit-intent: Free Visibility Review --- */
+#iti-exit { position: fixed; inset: 0; z-index: 9999; display: none;
+  align-items: center; justify-content: center; background: rgba(0,0,0,.65); padding: 20px; }
+#iti-exit.on { display: flex; }
+#iti-exit .card { background: #fff; border-radius: 16px; border-top: 4px solid #FF2251;
+  max-width: 440px; width: 100%; padding: 30px 28px; position: relative;
+  font-family: var(--contentfont, 'Plus Jakarta Sans', sans-serif);
+  box-shadow: 0 24px 70px rgba(0,0,0,.4); max-height: 90vh; overflow-y: auto; }
+#iti-exit .x { position: absolute; top: 10px; right: 14px; border: 0; background: none;
+  font-size: 26px; line-height: 1; color: #98a2b3; cursor: pointer; padding: 4px; }
+#iti-exit h3 { font-size: 24px; font-weight: 800; color: #111; margin: 0 0 8px; }
+#iti-exit p.sub { font-size: 15px; color: #444; line-height: 1.5; margin: 0 0 18px; }
+#iti-exit label { display: block; font-size: 13px; font-weight: 600; color: #344054; margin: 12px 0 4px; }
+#iti-exit input { width: 100%; box-sizing: border-box; padding: 11px 12px; font-size: 15px;
+  border: 1px solid #d0d5dd; border-radius: 8px; font-family: inherit; }
+#iti-exit input:focus { border-color: #FF2251; outline: none; box-shadow: 0 0 0 3px #ff225122; }
+#iti-exit .go { display: block; width: 100%; margin-top: 18px; border: 0; border-radius: 999px;
+  padding: 14px 20px; font-size: 16px; font-weight: 700; color: #fff; cursor: pointer;
+  background: linear-gradient(135deg, #C8083F, #FF2251); font-family: inherit; }
+#iti-exit .err { color: #e5405e; font-size: 13px; margin-top: 6px; display: none; }
+#iti-exit .done { text-align: center; padding: 26px 6px; display: none; }
+#iti-exit .done h3 { margin-bottom: 6px; }
+</style>
+
+<div id="iti-sticky"><button type="button" id="iti-sticky-btn">Find My Biggest Visibility Gap</button></div>
+
+<div id="iti-exit" role="dialog" aria-modal="true" aria-label="Free Visibility Review">
+  <div class="card">
+    <button type="button" class="x" aria-label="Close">&times;</button>
+    <div class="body">
+      <h3>Wait &mdash; get a Free Visibility Review</h3>
+      <p class="sub">Before you go: our strategists will personally review how visible your organization really is &mdash; and where you're losing ground. Free, no obligation.</p>
+      <label for="iti-ex-name">Name *</label>
+      <input id="iti-ex-name" type="text" autocomplete="name" placeholder="Your name">
+      <label for="iti-ex-email">Email *</label>
+      <input id="iti-ex-email" type="email" autocomplete="email" placeholder="you@company.com">
+      <label for="iti-ex-phone">Phone Number</label>
+      <input id="iti-ex-phone" type="tel" autocomplete="tel" placeholder="+1 (555) 000-0000">
+      <label for="iti-ex-biz">Business Name</label>
+      <input id="iti-ex-biz" type="text" autocomplete="organization" placeholder="Your company">
+      <div class="err" id="iti-ex-err">Please enter your name and a valid email.</div>
+      <button type="button" class="go" id="iti-ex-go">Claim My Free Visibility Review</button>
+    </div>
+    <div class="done" id="iti-ex-done">
+      <h3>You're in!</h3>
+      <p class="sub">A Story Group strategist will reach out shortly with your Free Visibility Review.</p>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  // ---- Sticky mobile CTA ----
+  var bar = document.getElementById('iti-sticky');
+  var shown = false;
+  window.addEventListener('scroll', function () {
+    var on = window.scrollY > 600;
+    if (on !== shown) { shown = on; bar.classList.toggle('on', on); }
+  }, {passive: true});
+  document.getElementById('iti-sticky-btn').addEventListener('click', function () {
+    if (window.fbq) fbq('trackCustom', 'AssessmentCTAClick', {source_page: 'sticky_bar'});
+    setTimeout(function () { window.location.href = 'assessment.html'; }, 200);
+  });
+
+  // ---- Exit intent ----
+  var modal = document.getElementById('iti-exit');
+  var seenKey = 'iti_exit_seen';
+  function seen() { try { return sessionStorage.getItem(seenKey) === '1'; } catch (e) { return true; } }
+  function markSeen() { try { sessionStorage.setItem(seenKey, '1'); } catch (e) {} }
+  function show() {
+    if (seen() || modal.classList.contains('on')) return;
+    markSeen();
+    modal.classList.add('on');
+    if (window.fbq) fbq('trackCustom', 'ExitIntentShown', {content_name: 'Free Visibility Review'});
+  }
+  // Desktop: cursor leaves through the top of the viewport
+  document.addEventListener('mouseout', function (e) {
+    if (!e.relatedTarget && e.clientY <= 8) show();
+  });
+  // Mobile: fast scroll-up after real engagement
+  var maxY = 0, lastY = 0, lastT = 0;
+  window.addEventListener('scroll', function () {
+    var y = window.scrollY, t = Date.now();
+    if (y > maxY) maxY = y;
+    if (maxY > 800 && lastY - y > 350 && t - lastT < 400) show();
+    lastY = y; lastT = t;
+  }, {passive: true});
+
+  function close() { modal.classList.remove('on'); }
+  modal.querySelector('.x').addEventListener('click', close);
+  modal.addEventListener('click', function (e) { if (e.target === modal) close(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') close(); });
+
+  document.getElementById('iti-ex-go').addEventListener('click', function () {
+    var name = document.getElementById('iti-ex-name').value.trim();
+    var email = document.getElementById('iti-ex-email').value.trim();
+    var phone = document.getElementById('iti-ex-phone').value.trim();
+    var biz = document.getElementById('iti-ex-biz').value.trim();
+    var err = document.getElementById('iti-ex-err');
+    if (!name || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { err.style.display = 'block'; return; }
+    err.style.display = 'none';
+
+    function e164(p) {
+      var d = (p || '').replace(/[^0-9]/g, '');
+      if (!d) return '';
+      if (d.length === 10) d = '1' + d;
+      return '+' + d;
+    }
+    function cookie(n) {
+      var m = document.cookie.match('(?:^|; )' + n + '=([^;]*)');
+      return m ? decodeURIComponent(m[1]) : '';
+    }
+    var utm = {};
+    try { utm = JSON.parse(sessionStorage.getItem('iti_utm') || '{}'); } catch (e) {}
+    var parts = name.split(/\s+/);
+    var eventId = (window.crypto && crypto.randomUUID) ? crypto.randomUUID()
+      : 'ev-' + Date.now() + '-' + Math.random().toString(36).slice(2);
+    var payload = {
+      event: 'free_visibility_review_requested',
+      event_id: eventId,
+      submitted_at: new Date().toISOString(),
+      first_name: parts[0] || '',
+      last_name: parts.slice(1).join(' '),
+      full_name: name,
+      email: email.toLowerCase(),
+      phone: e164(phone),
+      phone_raw: phone,
+      business_name: biz,
+      utm_source: utm.utm_source || '', utm_medium: utm.utm_medium || '',
+      utm_campaign: utm.utm_campaign || '', utm_term: utm.utm_term || '',
+      utm_content: utm.utm_content || '',
+      fbclid: utm.fbclid || '', gclid: utm.gclid || '',
+      fbp: cookie('_fbp'), fbc: cookie('_fbc'),
+      landing_page: (function () { try { return sessionStorage.getItem('iti_landing_page') || ''; } catch (e) { return ''; } })(),
+      submission_page: location.href.split('#')[0],
+      referrer: document.referrer || '',
+      user_agent: navigator.userAgent
+    };
+    try {
+      fetch('https://services.leadconnectorhq.com/hooks/IQ36D2pkFTeD7hYETpJ2/webhook-trigger/0c0202b4-c110-4145-a487-fdc15c29679d', {
+        method: 'POST', keepalive: true,
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(payload)
+      }).catch(function () {});
+    } catch (e) {}
+    if (window.fbq) {
+      fbq('track', 'Lead', {content_name: 'Free Visibility Review', content_category: 'exit_intent'}, {eventID: eventId});
+      fbq('trackCustom', 'ExitIntentLead', {content_name: 'Free Visibility Review'});
+    }
+    modal.querySelector('.body').style.display = 'none';
+    document.getElementById('iti-ex-done').style.display = 'block';
+    setTimeout(close, 3200);
+  });
+})();
+</script>
 </body></html>
