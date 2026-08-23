@@ -3810,12 +3810,10 @@ select.form-control:invalid{color:#667085;}
 .iti-opt:active{transform:scale(.985);}
 .iti-back{display:inline-block;margin-top:16px;font-size:14px;color:#667085;background:none;border:none;cursor:pointer;padding:4px 0;font-family:inherit;}
 .iti-back:hover{color:#FF2251;}
-.iti-contact-grid{display:flex;flex-wrap:wrap;}
-.iti-contact-grid .form-field-wrapper{width:100%;}
-.iti-contact-grid .form-field-wrapper.half{width:calc(50% - 6px);}
-.iti-contact-grid .form-field-wrapper.half + .form-field-wrapper.half{margin-left:12px;}
-@media (max-width:600px){.iti-contact-grid .form-field-wrapper.half{width:100%;}
-  .iti-contact-grid .form-field-wrapper.half + .form-field-wrapper.half{margin-left:0;}}
+.iti-contact-grid{display:flex;flex-wrap:wrap;column-gap:14px;}
+.iti-contact-grid .form-field-wrapper{width:100% !important;margin-left:0 !important;margin-right:0 !important;}
+.iti-contact-grid .form-field-wrapper.half{width:calc(50% - 7px) !important;}
+@media (max-width:600px){.iti-contact-grid .form-field-wrapper.half{width:100% !important;}}
 .fld-err{color:#e5405e;font-size:13px;margin-top:5px;font-weight:500;}
 </style>
 <script>
@@ -3918,8 +3916,8 @@ select.form-control:invalid{color:#667085;}
         '<div class="iti-sub">Enter your details to reveal it — free report and roadmap included.</div>' +
         '<div class="iti-contact-grid" id="iti-contact"></div>';
       var grid = q('#iti-contact', ui);
-      [[wrapOf(fld.first), 'half'], [wrapOf(fld.last), 'half'], [wrapOf(fld.email), ''],
-       [wrapOf(fld.phone), ''],
+      [[wrapOf(fld.first), 'half'], [wrapOf(fld.last), 'half'],
+       [wrapOf(fld.email), 'half'], [wrapOf(fld.phone), 'half'],
        [wrapOf(fld.consent), ''], [wrapOf(fld.submit), '']].forEach(function (pair) {
         var w = pair[0];
         if (!w || w.dataset.omit) return;
