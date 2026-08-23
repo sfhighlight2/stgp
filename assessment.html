@@ -3909,6 +3909,10 @@ select.form-control:invalid{color:#667085;}
   function markStarted() {
     if (started) return;
     started = true;
+    var note = ui.querySelector('.iti-timenote');
+    if (note) note.style.display = 'none';
+    var subhead = document.getElementById('sub-heading-fuZHsGwvLi8');
+    if (subhead) subhead.style.display = 'none';
     if (window.fbq) fbq('trackCustom', 'AssessmentStarted', {content_name: 'ITI Assessment'});
   }
 
@@ -3920,8 +3924,7 @@ select.form-control:invalid{color:#667085;}
       plbl.textContent = 'Question ' + (step + 1) + ' of 3 — ' + qq.dim;
       var html = '<div class="iti-q">' + qq.q + '</div><div class="iti-opts">';
       qq.opts.forEach(function (o, i) {
-        var sel = answers[qq.dim] === i + 1 ? ' sel' : '';
-        html += '<button type="button" class="iti-opt' + sel + '" data-v="' + (i + 1) + '">' + o + '</button>';
+        html += '<button type="button" class="iti-opt" data-v="' + (i + 1) + '">' + o + '</button>';
       });
       html += '</div>';
       stage.innerHTML = html;
@@ -3941,8 +3944,8 @@ select.form-control:invalid{color:#667085;}
         fbq('trackCustom', 'AssessmentQuestionsCompleted', {content_name: 'ITI Assessment'});
       }
       stage.innerHTML =
-        '<div class="iti-q">Where can we see you online?</div>' +
-        '<div class="iti-sub">Drop your website or a social handle \u2014 we\u2019ll include it in your visibility analysis.</div>' +
+        '<div class="iti-q">See how I compare to my competition.</div>' +
+        '<div class="iti-sub">Drop your website or a social handle \u2014 we\u2019ll factor it into your visibility analysis.</div>' +
         '<input type="text" class="iti-site-input" id="iti-site" placeholder="yourcompany.com or @yourhandle" autocomplete="url" value="' + website.replace(/"/g, '&quot;') + '">' +
         '<button type="button" class="iti-analyze-btn" id="iti-analyze">Analyze My Visibility</button>' +
         '<button type="button" class="iti-skip" id="iti-site-skip">I don\u2019t have one \u2014 skip</button>';
