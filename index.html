@@ -4813,12 +4813,56 @@ src="https://www.facebook.com/tr?id=1208230168032417&ev=PageView&noscript=1"
 })();
 </script>
 
+<style>
+.vid-wrap { position: relative; display: block; width: 100%; max-width: 380px; margin: 0 auto; }
+.vid-wrap video { max-width: 100% !important; }
+.vid-sound {
+  position: absolute; left: 50%; bottom: 14px; transform: translateX(-50%);
+  display: inline-flex; align-items: center; gap: 7px; border: 0; cursor: pointer;
+  padding: 9px 18px; border-radius: 999px; font-size: 14px; font-weight: 600; color: #fff;
+  font-family: var(--contentfont, 'Plus Jakarta Sans', sans-serif);
+  background: rgba(0,0,0,.62); backdrop-filter: blur(6px);
+  box-shadow: 0 4px 14px rgba(0,0,0,.35); transition: background .15s;
+}
+.vid-sound:hover { background: rgba(0,0,0,.8); }
+</style>
 <script>
 document.querySelectorAll('video[autoplay]').forEach(function (v) {
   v.muted = true;
   new IntersectionObserver(function (es) {
     es.forEach(function (e) { if (e.isIntersecting && v.paused) v.play().catch(function () {}); });
   }, {threshold: 0.2}).observe(v);
+
+  var wrap = document.createElement('div');
+  wrap.className = 'vid-wrap';
+  v.parentNode.insertBefore(wrap, v);
+  wrap.appendChild(v);
+
+  var btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'vid-sound';
+  btn.innerHTML = '&#128266; Tap for sound';
+  btn.setAttribute('aria-label', 'Unmute video');
+  wrap.appendChild(btn);
+
+  var soundedOnce = false;
+  function setUI() {
+    btn.innerHTML = v.muted ? '&#128266; Tap for sound' : '&#128263; Mute';
+    btn.setAttribute('aria-label', v.muted ? 'Unmute video' : 'Mute video');
+  }
+  btn.addEventListener('click', function () {
+    v.muted = !v.muted;
+    if (!v.muted) {
+      v.play().catch(function () {});
+      if (!soundedOnce) {
+        soundedOnce = true;
+        if (window.fbq) fbq('trackCustom', 'VideoSoundOn', {content_name: 'Attention Fades Trust Lasts'});
+      }
+    }
+    setUI();
+  });
+  v.addEventListener('click', function () { btn.click(); });
+  setUI();
 });
 </script>
 </body></html>
