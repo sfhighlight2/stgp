@@ -4738,6 +4738,7 @@ src="https://www.facebook.com/tr?id=1208230168032417&ev=PageView&noscript=1"
   function seen() { try { return sessionStorage.getItem(seenKey) === '1'; } catch (e) { return true; } }
   function markSeen() { try { sessionStorage.setItem(seenKey, '1'); } catch (e) {} }
   function show() {
+    try { if (sessionStorage.getItem('iti_lead')) return; } catch (e) {}
     if (seen() || modal.classList.contains('on')) return;
     markSeen();
     modal.classList.add('on');
@@ -4806,6 +4807,12 @@ src="https://www.facebook.com/tr?id=1208230168032417&ev=PageView&noscript=1"
       referrer: document.referrer || '',
       user_agent: navigator.userAgent
     };
+    try {
+      sessionStorage.setItem('iti_exit_lead', JSON.stringify({
+        first_name: parts[0] || '', last_name: parts.slice(1).join(' '),
+        email: email, phone: phone
+      }));
+    } catch (e) {}
     try {
       fetch('https://services.leadconnectorhq.com/hooks/IQ36D2pkFTeD7hYETpJ2/webhook-trigger/0c0202b4-c110-4145-a487-fdc15c29679d', {
         method: 'POST', keepalive: true,

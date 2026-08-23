@@ -4077,6 +4077,19 @@ select.form-control:invalid{color:#667085;}
       });
       var btnText = fld.submit.querySelector('.button-text p') || fld.submit.querySelector('.button-text');
       if (btnText) btnText.textContent = 'Find My Biggest Visibility Gap';
+      // Prefill from the exit-intent popup so returning users aren't asked twice
+      try {
+        var pre = JSON.parse(sessionStorage.getItem('iti_exit_lead') || 'null');
+        if (pre) {
+          if (pre.first_name && !fld.first.value) fld.first.value = pre.first_name;
+          if (pre.last_name && !fld.last.value) fld.last.value = pre.last_name;
+          if (pre.email && !fld.email.value) fld.email.value = pre.email;
+          if (pre.phone && fld.phone && !fld.phone.value) {
+            fld.phone.value = pre.phone;
+            fld.phone.dispatchEvent(new Event('input'));
+          }
+        }
+      } catch (e) {}
       setTimeout(function () { try { fld.first.focus({preventScroll: true}); } catch (e) {} }, 250);
     }
     ui.scrollIntoView({behavior: 'smooth', block: 'nearest'});

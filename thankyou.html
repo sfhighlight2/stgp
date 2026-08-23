@@ -413,6 +413,19 @@ footer p { font-size: 14px; max-width: 560px; margin: 0 auto; line-height: 1.5; 
     document.getElementById('r-score-num').textContent = '–';
   }
 
+  // Prefill the booking widget so nobody is asked for their details twice
+  if (lead && lead.email) {
+    var iframe = document.querySelector('#book iframe');
+    if (iframe) {
+      var qs = [];
+      if (lead.first_name) qs.push('first_name=' + encodeURIComponent(lead.first_name));
+      if (lead.last_name) qs.push('last_name=' + encodeURIComponent(lead.last_name));
+      if (lead.email) qs.push('email=' + encodeURIComponent(lead.email));
+      if (lead.phone) qs.push('phone=' + encodeURIComponent(lead.phone));
+      if (qs.length) iframe.src = iframe.src.split('?')[0] + '?' + qs.join('&');
+    }
+  }
+
   document.querySelectorAll('[data-book-cta]').forEach(function (el) {
     el.addEventListener('click', function (ev) {
       ev.preventDefault();
