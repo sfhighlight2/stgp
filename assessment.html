@@ -4057,14 +4057,11 @@ select.form-control:invalid{color:#667085;}
         grid.appendChild(w);
       });
       var cw = wrapOf(fld.consent);
-      function syncConsent() {
-        var has = fld.phone && fld.phone.value.trim();
-        if (cw) cw.style.display = has ? '' : 'none';
-        if (fld.consent && !fld.consent.dataset.touched) fld.consent.checked = !!has;
+      if (cw) cw.style.display = '';
+      if (fld.consent) {
+        if (!fld.consent.dataset.touched) fld.consent.checked = true;
+        fld.consent.addEventListener('change', function () { fld.consent.dataset.touched = '1'; });
       }
-      if (fld.consent) fld.consent.addEventListener('change', function () { fld.consent.dataset.touched = '1'; });
-      if (fld.phone) fld.phone.addEventListener('input', syncConsent);
-      syncConsent();
       var trust = document.createElement('div');
       trust.style.cssText = 'text-align:center;font-size:13px;color:#667085;margin-top:12px;';
       trust.innerHTML = '100% free &middot; Results calculated instantly &middot; No spam, ever';
