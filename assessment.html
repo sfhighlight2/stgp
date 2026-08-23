@@ -3962,13 +3962,40 @@ select.form-control:invalid{color:#667085;}
         '<button type="button" class="iti-skip" id="iti-site-skip">I don\u2019t have one \u2014 skip</button>';
       var siteInput = q('#iti-site', ui);
       setTimeout(function () { try { siteInput.focus({preventScroll: true}); } catch (e) {} }, 250);
-      function goAnalyze(skipped) {
-        website = skipped ? '' : siteInput.value.trim();
-        if (!skipped && !website) {
-          siteInput.style.borderColor = '#e5405e';
-          siteInput.placeholder = 'Enter a website or handle \u2014 or tap skip below';
-          return;
+      function siteErr(msg) {
+        var e = ui.querySelector('.iti-site-err');
+        if (!msg) { if (e) e.remove(); siteInput.style.borderColor = ''; return; }
+        if (!e) {
+          e = document.createElement('div');
+          e.className = 'fld-err iti-site-err';
+          siteInput.insertAdjacentElement('afterend', e);
         }
+        e.textContent = msg;
+        siteInput.style.borderColor = '#e5405e';
+      }
+      function goAnalyze(skipped) {
+        if (skipped) {
+          website = '';
+        } else {
+          var val = siteInput.value.trim();
+          if (!val) {
+            siteErr('Enter your website or social handle \u2014 or tap skip below.');
+            return;
+          }
+          var emailLike = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val);
+          if (emailLike) {
+            siteErr('That looks like an email \u2014 it should be your website or handle, like yourcompany.com or @yourname.');
+            return;
+          }
+          var domainLike = /^(https?:\/\/)?(www\.)?[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)+([\/?#]\S*)?$/.test(val);
+          var handleLike = /^@[A-Za-z0-9_.]{2,30}$/.test(val);
+          if (!domainLike && !handleLike) {
+            siteErr('That doesn\u2019t look right \u2014 it should be your website or handle, like yourcompany.com or @yourname.');
+            return;
+          }
+          website = val;
+        }
+        siteErr(null);
         if (window.fbq && website) fbq('trackCustom', 'WebsiteSubmitted', {content_name: 'ITI Assessment'});
         step = 4; render();
       }
@@ -3977,7 +4004,7 @@ select.form-control:invalid{color:#667085;}
       siteInput.addEventListener('keydown', function (ev) {
         if (ev.key === 'Enter') { ev.preventDefault(); goAnalyze(false); }
       });
-      siteInput.addEventListener('input', function () { siteInput.style.borderColor = ''; });
+      siteInput.addEventListener('input', function () { siteErr(null); });
     } else if (step === 4) {
       plbl.textContent = 'Analyzing your visibility\u2026';
       var target = website ? website.replace(/^https?:\/\//, '').replace(/\/$/, '') : 'your answers';
@@ -4077,8 +4104,9 @@ select.form-control:invalid{color:#667085;}
       if (!v) { setErr(el, 'Enter your email so we can send your report.'); return false; }
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(v)) { setErr(el, 'Enter a valid email.'); return false; }
     } else if (el === fld.phone) {
-      var digits = v.replace(/[^0-9]/g, '');
-      if (digits.length < 10) { setErr(el, 'Enter your phone number.'); return false; }
+      if (!v) { setErr(el, 'Enter your phone number.'); return false; }
+      var cleaned = v.replace(/[\s().+-]/g, '');
+      if (!/^[0-9]{10,15}$/.test(cleaned)) { setErr(el, 'Enter a valid phone number, like (555) 123-4567.'); return false; }
     } else if (!v) {
       setErr(el, el === fld.first ? 'Enter your first name.' : 'Enter your last name.');
       return false;
