@@ -297,6 +297,12 @@ footer p { font-size: 14px; max-width: 560px; margin: 0 auto; line-height: 1.5; 
       ' within the next few minutes. (Check spam, just in case.)';
     document.getElementById('r-title').textContent = name + "'s Authority Breakdown";
   }
+  if (lead && lead.website) {
+    var src = document.createElement('div');
+    src.style.cssText = 'font-size:12.5px;color:#98a2b3;margin-top:6px;';
+    src.textContent = 'Analysis includes: ' + lead.website;
+    document.getElementById('r-title').after(src);
+  }
 
   var DIMS = [
     { key: 'Visibility',

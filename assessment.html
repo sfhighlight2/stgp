@@ -3815,6 +3815,32 @@ select.form-control:invalid{color:#667085;}
 .iti-contact-grid .form-field-wrapper.half{width:calc(50% - 7px) !important;}
 @media (max-width:600px){.iti-contact-grid .form-field-wrapper.half{width:100% !important;}}
 .fld-err{color:#e5405e;font-size:13px;margin-top:5px;font-weight:500;}
+.iti-site-input{width:100%;box-sizing:border-box;padding:14px 16px;font-size:16px;font-family:inherit;
+  border:1.5px solid #d0d5dd;border-radius:10px;}
+.iti-site-input:focus{border-color:#FF2251;outline:none;box-shadow:0 0 0 3px #ff225122;}
+.iti-analyze-btn{display:block;width:100%;margin-top:14px;border:0;border-radius:10px;cursor:pointer;
+  padding:15px 20px;font-size:16px;font-weight:700;color:#fff;font-family:inherit;
+  background:linear-gradient(135deg,#C8083F,#FF2251);}
+.iti-skip{display:block;text-align:center;margin-top:12px;font-size:13px;color:#98a2b3;background:none;border:none;
+  cursor:pointer;font-family:inherit;text-decoration:underline;}
+.iti-skip:hover{color:#FF2251;}
+.iti-scan{padding:6px 0 10px;}
+.iti-scan-head{display:flex;align-items:center;gap:14px;margin-bottom:18px;}
+.iti-spin{width:34px;height:34px;border-radius:50%;flex-shrink:0;
+  border:3px solid #ffd6de;border-top-color:#FF2251;animation:itispin .9s linear infinite;}
+@keyframes itispin{to{transform:rotate(360deg)}}
+.iti-scan-title{font-size:18px;font-weight:700;color:#111;}
+.iti-scan-sub{font-size:13px;color:#667085;margin-top:2px;}
+.iti-scan-list{list-style:none;margin:0;padding:0;}
+.iti-scan-list li{display:flex;align-items:center;gap:10px;padding:9px 0;font-size:14.5px;color:#c3c9d1;
+  transition:color .3s;border-bottom:1px solid #f5f6f8;}
+.iti-scan-list li.active{color:#111;font-weight:600;}
+.iti-scan-list li.done{color:#344054;}
+.iti-scan-list li .ic{width:18px;height:18px;flex-shrink:0;border-radius:50%;border:2px solid #e4e7ec;position:relative;}
+.iti-scan-list li.active .ic{border-color:#FF2251;border-top-color:transparent;animation:itispin .8s linear infinite;}
+.iti-scan-list li.done .ic{border:0;background:linear-gradient(135deg,#C8083F,#FF2251);}
+.iti-scan-list li.done .ic::after{content:'';position:absolute;left:5px;top:2px;width:4px;height:8px;
+  border:solid #fff;border-width:0 2px 2px 0;transform:rotate(45deg);}
 </style>
 <script>
 (function () {
@@ -3831,6 +3857,7 @@ select.form-control:invalid{color:#667085;}
   ];
   var OLD_QIDS = ['xuA2I8UuNnXOlKa0WnCf','HZfGbkp6CD3sENWXPoJZ','hKbWchIrl3zErYrXozaG','cFPKSqTSn3giswFj27DE','4bX60RkzkuruPYdIkwwK'];
   var answers = {};
+  var website = '';
   var started = false;
 
   function q(sel, root) { return (root || document).querySelector(sel); }
@@ -3876,7 +3903,8 @@ select.form-control:invalid{color:#667085;}
 
   var stage = q('#iti-stage', ui), plbl = q('#iti-plbl', ui),
       pfill = q('#iti-pfill', ui), backBtn = q('#iti-back', ui);
-  var step = 0; // 0..2 questions, 3 = contact
+  var step = 0; // 0..2 questions, 3 = website, 4 = analyzing, 5 = contact
+  var PROG = [17, 34, 50, 66, 88, 100];
 
   function markStarted() {
     if (started) return;
@@ -3885,8 +3913,8 @@ select.form-control:invalid{color:#667085;}
   }
 
   function render() {
-    backBtn.style.display = step > 0 ? '' : 'none';
-    pfill.style.width = ((step + 1) / 4 * 100) + '%';
+    backBtn.style.display = (step > 0 && step !== 4) ? '' : 'none';
+    pfill.style.width = PROG[step] + '%';
     if (step < 3) {
       var qq = QUIZ[step];
       plbl.textContent = 'Question ' + (step + 1) + ' of 3 — ' + qq.dim;
@@ -3906,12 +3934,73 @@ select.form-control:invalid{color:#667085;}
           setTimeout(function () { step++; render(); }, 220);
         });
       });
-    } else {
-      plbl.textContent = 'We\u2019ve found your biggest gap';
-      if (window.fbq && !render.contactFired) {
-        render.contactFired = true;
+    } else if (step === 3) {
+      plbl.textContent = 'One last step \u2014 your online presence';
+      if (window.fbq && !render.qDoneFired) {
+        render.qDoneFired = true;
         fbq('trackCustom', 'AssessmentQuestionsCompleted', {content_name: 'ITI Assessment'});
       }
+      stage.innerHTML =
+        '<div class="iti-q">Where can we see you online?</div>' +
+        '<div class="iti-sub">Drop your website or a social handle \u2014 we\u2019ll include it in your visibility analysis.</div>' +
+        '<input type="text" class="iti-site-input" id="iti-site" placeholder="yourcompany.com or @yourhandle" autocomplete="url" value="' + website.replace(/"/g, '&quot;') + '">' +
+        '<button type="button" class="iti-analyze-btn" id="iti-analyze">Analyze My Visibility</button>' +
+        '<button type="button" class="iti-skip" id="iti-site-skip">I don\u2019t have one \u2014 skip</button>';
+      var siteInput = q('#iti-site', ui);
+      setTimeout(function () { try { siteInput.focus({preventScroll: true}); } catch (e) {} }, 250);
+      function goAnalyze(skipped) {
+        website = skipped ? '' : siteInput.value.trim();
+        if (!skipped && !website) {
+          siteInput.style.borderColor = '#e5405e';
+          siteInput.placeholder = 'Enter a website or handle \u2014 or tap skip below';
+          return;
+        }
+        if (window.fbq && website) fbq('trackCustom', 'WebsiteSubmitted', {content_name: 'ITI Assessment'});
+        step = 4; render();
+      }
+      q('#iti-analyze', ui).addEventListener('click', function () { goAnalyze(false); });
+      q('#iti-site-skip', ui).addEventListener('click', function () { goAnalyze(true); });
+      siteInput.addEventListener('keydown', function (ev) {
+        if (ev.key === 'Enter') { ev.preventDefault(); goAnalyze(false); }
+      });
+      siteInput.addEventListener('input', function () { siteInput.style.borderColor = ''; });
+    } else if (step === 4) {
+      plbl.textContent = 'Analyzing your visibility\u2026';
+      var target = website ? website.replace(/^https?:\/\//, '').replace(/\/$/, '') : 'your answers';
+      var LINES = [
+        'Scanning ' + target + '\u2026',
+        'Checking how easily buyers find you\u2026',
+        'Weighing credibility signals\u2026',
+        'Building your gap analysis\u2026'
+      ];
+      stage.innerHTML =
+        '<div class="iti-scan">' +
+        '<div class="iti-scan-head"><div class="iti-spin"></div><div>' +
+        '<div class="iti-scan-title">Analyzing your visibility</div>' +
+        '<div class="iti-scan-sub">This takes a few seconds\u2026</div></div></div>' +
+        '<ul class="iti-scan-list">' +
+        LINES.map(function (l) { return '<li><span class="ic"></span><span>' + l + '</span></li>'; }).join('') +
+        '</ul></div>';
+      var items = stage.querySelectorAll('.iti-scan-list li');
+      var idx = 0;
+      var animFill = setInterval(function () {
+        var w = parseFloat(pfill.style.width);
+        if (w < 97) pfill.style.width = (w + 1.2) + '%';
+      }, 120);
+      function tick() {
+        if (idx > 0) { items[idx - 1].classList.remove('active'); items[idx - 1].classList.add('done'); }
+        if (idx >= items.length) {
+          clearInterval(animFill);
+          setTimeout(function () { step = 5; render(); }, 500);
+          return;
+        }
+        items[idx].classList.add('active');
+        idx++;
+        setTimeout(tick, 950 + Math.random() * 350);
+      }
+      setTimeout(tick, 300);
+    } else {
+      plbl.textContent = 'We\u2019ve found your biggest gap';
       stage.innerHTML = '<div class="iti-q">We\u2019ve found your biggest gap.</div>' +
         '<div class="iti-sub">Enter your details to reveal it — free report and roadmap included.</div>' +
         '<div class="iti-contact-grid" id="iti-contact"></div>';
@@ -3951,7 +4040,7 @@ select.form-control:invalid{color:#667085;}
     }
     ui.scrollIntoView({behavior: 'smooth', block: 'nearest'});
   }
-  backBtn.addEventListener('click', function () { if (step > 0) { step--; render(); } });
+  backBtn.addEventListener('click', function () { if (step === 5) { step = 3; } else if (step > 0 && step !== 4) { step--; } else { return; } render(); });
   render();
 
   // ---- inline validation ----
@@ -4041,6 +4130,7 @@ select.form-control:invalid{color:#667085;}
       last_name: fld.last.value.trim(),
       phone: rawPhone,
       email: fld.email.value.trim(),
+      website: website,
       sms_consent: !!(fld.consent && fld.consent.checked),
       answers: answers,
       score: total, biggest_gap: biggestGap, gap_dimension: gapDim,
@@ -4062,6 +4152,7 @@ select.form-control:invalid{color:#667085;}
       email: lead.email.toLowerCase(),
       phone: e164(rawPhone),
       phone_raw: rawPhone,
+      website: website,
       sms_consent: lead.sms_consent ? 'yes' : 'no',
 
       iti_score: total,
